@@ -58,7 +58,7 @@ def draw_picture(transfer_matrix, window):
 
 def main():
 
-    transfer_matrix = [[1,0],[0,1]] #initially, just use identity matrix
+    transfer_matrix = [[1,2],[3,4]]
 
     keep_open= True
 

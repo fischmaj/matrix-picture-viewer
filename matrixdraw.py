@@ -5,11 +5,16 @@ from ast import literal_eval as make_tuple
 
 # This function takes two python lists.  The first must be a 
 # 2x2 array, and the second must be a 2x1 array (a 2 entry list), and it 
-# returns the matrix product of the 2x2 matrix and the 2x1 vector
+# returns the matrix product of the 2x2 matrix and the 2x1 vector. 
 def matrix_mult(transfer, vector):
     new_vector = [0,0]
-    new_vector[0]=transfer[0][0]*vector[0]+transfer[0][1]*vector[1]
-    new_vector[1]=transfer[1][0]*vector[0]+transfer[1][1]*vector[1]
+
+    #explicitly cast all of the values as floats
+    new_vector[0]=( float(transfer[0][0]) * float(vector[0]) +
+                    float(transfer[0][1]) * float(vector[1]) )
+
+    new_vector[1]=( float(transfer[1][0]) * float(vector[0]) +
+                    float(transfer[1][1]) * float(vector[1]) )
 
     return new_vector
 
@@ -34,7 +39,7 @@ def draw_picture(transfer_matrix, window):
     new_object = True
 
     for text_line in myfile:
-        if text_line != "\n":
+        if text_line[0] == "(":
             if new_object:
                 old_point = make_tuple(text_line)
                 old_point = matrix_mult(transfer_matrix, old_point)
@@ -43,8 +48,10 @@ def draw_picture(transfer_matrix, window):
             point = make_tuple(text_line)
             point = matrix_mult(transfer_matrix, point)
 
-            line = Line(Point( (old_point[0]), (old_point[1]) ), 
-                        Point( (point[0]), (point[1]) )  )
+            # matrix_mult returns floats, so they must be explicitly cast
+            # to ints before they are valid graphics points
+            line = Line(Point( int ((old_point[0])), int((old_point[1])) ), 
+                        Point( int((point[0])), int((point[1])) )  )
             line.setOutline(color_rgb(0,255,0))
             line.draw(window)
             line_list.append(line)
@@ -58,7 +65,7 @@ def draw_picture(transfer_matrix, window):
 
 def main():
 
-    transfer_matrix = [[1,0],[0,1]] #initially, just use identity matrix
+    transfer_matrix = [[1.0,0.0],[0.0,1.0]]#initially, just use identity matrix
 
     keep_open= True
 
@@ -165,10 +172,10 @@ def main():
                 # and redraw the picture using the new values
                 try:
 
-                    transfer_matrix[0][0]=int( input00_box.getText() )
-                    transfer_matrix[0][1]=int( input01_box.getText() )
-                    transfer_matrix[1][0]=int( input10_box.getText() )
-                    transfer_matrix[1][1]=int( input11_box.getText() )
+                    transfer_matrix[0][0]=float( input00_box.getText() )
+                    transfer_matrix[0][1]=float( input01_box.getText() )
+                    transfer_matrix[1][0]=float( input10_box.getText() )
+                    transfer_matrix[1][1]=float( input11_box.getText() )
                     drawn_objects.append (draw_picture(transfer_matrix, win))
 
                 # if there is a problem with the read or draw operations,
